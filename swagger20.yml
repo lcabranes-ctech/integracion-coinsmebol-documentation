@@ -1,0 +1,431 @@
+swagger: "2.0"
+info:
+  description: "Api de Integracion de Cambalache Technologies"
+  version: "1.0.0"
+  title: "CambalAPI"
+  contact:
+    email: "leandro.cabranes@c-tech.com.ar"
+host: "integracion-coinsmebol.herokuapp.com"
+basePath: "/api"
+tags:
+- name: "cuenta"
+  description: "Clientes de Coinsmebol"
+- name: "caso"
+  description: "Casos de Coinsmebol, gestion de venta"
+schemes:
+- "https"
+- "http"
+paths:
+  /account:
+    post:
+      tags:
+      - "cuenta"
+      summary: "Crear una nueva cuenta"
+      description: ""
+      operationId: "addAccount"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Cada cliente que no se encuentre ya registrado debera ser creado para poder continuar su operacion"
+        required: true
+        schema:
+          $ref: "#/definitions/CuentaPostBody"
+      responses:
+        "200":
+          description: "se devuelve el Salesforce Id"
+          content:
+            "application/json":
+              schema: 
+                $ref: "#/definitions/CuentaPostResponse"
+        "405":
+          description: "Invalid input"
+      security:
+      - cambalapi_auth:
+        - "write:cuentas"
+        - "read:cuentas"
+    put:
+      tags:
+      - "cuenta"
+      summary: "Actualizar una cuenta existente"
+      description: ""
+      operationId: "updateAccount"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Se necesita enviar siempre el salesforce Id, provisto en la creacion de la cuenta"
+        required: true
+        schema:
+          $ref: "#/definitions/CuentaPutBody"
+      responses:
+        "200":
+          description: "Se devuelve true o false"
+      security:
+      - cambalapi_auth:
+        - "write:cuentas"
+        - "read:cuentas"
+    get:
+      tags:
+      - "cuenta"
+      summary: "Actualizar una cuenta existente"
+      description: ""
+      operationId: "updateAccount"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Se necesita enviar siempre el salesforce Id, provisto en la creacion de la cuenta"
+        required: true
+        schema:
+          $ref: "#/definitions/CuentaGetBody"
+      responses:
+        "200":
+          description: "Se devuelve true o false"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/definitions/CuentaGetResponse"
+      security:
+      - cambalapi_auth:
+        - "write:casos"
+        - "read:casos"
+  /case:
+    post:
+      tags:
+      - "caso"
+      summary: "Crear un nuevo caso"
+      description: ""
+      operationId: "addCase"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Cada cliente que no se encuentre ya registrado debera ser creado para poder continuar su operacion"
+        required: true
+        schema:
+          $ref: "#/definitions/CasoPostBody"
+      responses:
+        "200":
+          description: "se devuelve el Salesforce Id"
+          content:
+            "application/json":
+              schema: 
+                $ref: "#/definitions/CasoPostResponse"
+        "500":
+          description: "Error interno de la app"
+        "503":
+          description: "Error interno del servidor"
+      security:
+      - cambalapi_auth:
+        - "write:casos"
+        - "read:casos"
+    put:
+      tags:
+      - "caso"
+      summary: "Actualizar campos de un caso"
+      description: ""
+      operationId: "addCase"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Cada cliente que no se encuentre ya registrado debera ser creado para poder continuar su operacion"
+        required: true
+        schema:
+          $ref: "#/definitions/CasoPutBody"
+      responses:
+        "200":
+          description: "Se devuelve true o false"
+        "500":
+          description: "Error interno de la app"
+        "503":
+          description: "Error interno del servidor"
+      security:
+      - cambalapi_auth:
+        - "write:casos"
+        - "read:casos"
+securityDefinitions:
+  cambalapi_auth:
+    type: basic
+definitions:
+  CuentaPostBody:
+    type: "object"
+    required:
+    - "Email"
+    properties:
+      FirstName:
+        type: "string"
+        example: "Fernando"
+      LastName:
+        type: "string"
+        example: "Fernandez"
+      Phone:
+        type: "string"
+        example: "+54 9 11 0099 8877"
+      Edad:
+        type: "integer"
+        format: "int64"
+        example: 18
+      Email:
+        type: "string"
+        example: "ejemplo@ejemplo.com"
+      Consola:
+        type: "string"
+        descripction: "consolas disponibles"
+        enum:
+        - "Xbox One"
+        - "Playstation 4"
+        - "Playstation 5"
+        - "Pc"
+      Proveedor:
+        type: "boolean"
+      Valoracion:
+        type: "string"
+        enum:
+        - "1"
+        - "2"
+        - "3"
+        - "4"
+        - "5"
+      ComentariosDeLaValoracion:
+        type: "string"
+        example: "El pibe es copado"
+      BillingCountry:
+        type: "string"
+        example: "Argentina"
+  CuentaPostResponse:
+    type: "object"
+    properties:
+      Cuenta_Id:
+        type: "string"
+        example: "01xxxxxxxxxxxx0AA4"
+  CuentaPutBody:
+    type: "object"
+    required:
+    - "Cuenta_Id"
+    properties:
+      Cuenta_Id:
+        type: "string"
+        example: "01xxxxxxxxxxxx0AA4"
+      FirstName:
+        type: "string"
+        example: "Fernando"
+      LastName:
+        type: "string"
+        example: "Fernandez"
+      Phone:
+        type: "string"
+        example: "+54 9 11 0099 8877"
+      Edad:
+        type: "integer"
+        format: "int64"
+        example: 18
+      Email:
+        type: "string"
+        example: "ejemplo@ejemplo.com"
+      Consola:
+        type: "string"
+        descripction: "consolas disponibles"
+        enum:
+        - "Xbox One"
+        - "Playstation 4"
+        - "Playstation 5"
+        - "Pc"
+      Proveedor:
+        type: "boolean"
+      Valoracion:
+        type: "string"
+        enum:
+        - "1"
+        - "2"
+        - "3"
+        - "4"
+        - "5"
+      ComentariosDeLaValoracion:
+        type: "string"
+        example: "El pibe es copado"
+      BillingCountry:
+        type: "string"
+        example: "Argentina"
+  CuentaGetBody:
+    type: "object"
+    properties:
+      Email:
+        type: "string"
+        example: "ejemplo@ejemplo.com"
+  CuentaGetResponse:
+    type: "object"
+    required:
+    - "Cuenta_Id"
+    properties:
+      Cuenta_Id:
+        type: "string"
+        example: "01xxxxxxxxxxxx0AA4"
+      FirstName:
+        type: "string"
+        example: "Fernando"
+      LastName:
+        type: "string"
+        example: "Fernandez"
+      Phone:
+        type: "string"
+        example: "+54 9 11 0099 8877"
+      Edad:
+        type: "integer"
+        format: "int64"
+        example: 18
+      Email:
+        type: "string"
+        example: "ejemplo@ejemplo.com"
+      Consola:
+        type: "string"
+        descripction: "consolas disponibles"
+        enum:
+        - "Xbox One"
+        - "Playstation 4"
+        - "Playstation 5"
+        - "Pc"
+      Proveedor:
+        type: "boolean"
+      Valoracion:
+        type: "string"
+        enum:
+        - "1"
+        - "2"
+        - "3"
+        - "4"
+        - "5"
+      ComentariosDeLaValoracion:
+        type: "string"
+        example: "El pibe es copado"
+      BillingCountry:
+        type: "string"
+        example: "Argentina"
+  CasoPostBody:
+    type: "object"
+    required:
+    - "Account_id"
+    properties:
+      Account_Id:
+        type: "string"
+        example: "01xxxxxxxxxxxx0AA4"
+      Asunto:
+        type: "string"
+        example: "Webchat: Fernando Fernandez"
+      Estado:
+        type: "string"
+        enum:
+        - "Nuevo"
+        - "Asesoramiento"
+        - "Espera de confirmacion"
+        - "Compra de Jugador"
+        - "Registro de Pago"
+        - "Venta de Jugador"
+        - "Cerrado Ganado"
+        - "Cerrado Perdido"
+        - "Cerrado"
+      Metodo_Pago:
+        type: "string"
+        description: "metodos de pago disponibles"
+        enum:
+        - "Mercado Pago"
+        - "Paypal"
+        - "PatU"
+        - "Uala"
+      Cuenta_EA:
+        type: "string"
+        example: "ff98"
+      Fifa_Coins:
+        type: "float"
+        example: 12.34
+      Importe:
+        type: "float"
+        example: 12.34
+      Divisa:
+        type: "string"
+        example: "Pesos Argentinos"
+      Importe_Divisa_Local:
+        type: "float"
+        example: 12.34
+      Jugador_Solicitado:
+        type: "string"
+        example: "Pele"
+  CasoPostResponse:
+    type: "object"
+    required:
+    - "Account_id"
+    properties:
+      Caso_Id:
+        type: "string"
+        example: "01xxxxxxxxxxxx0AA4"
+  CasoPutBody:
+    type: "object"
+    required:
+    - "Caso_Id"
+    properties:
+      Caso_Id:
+        type: "string"
+        example: "01xxxxxxxxxxxx0AA4"
+      Tipo_Caso:
+        type: "string"
+        enum:
+        - "Comentarios"
+        - "Venta"
+        - "Compra"
+      Asunto:
+        type: "string"
+        example: "Webchat: Fernando Fernandez"
+      Estado:
+        type: "string"
+        enum:
+        - "Nuevo"
+        - "Asesoramiento"
+        - "Espera de confirmacion"
+        - "Compra de Jugador"
+        - "Registro de Pago"
+        - "Venta de Jugador"
+        - "Cerrado Ganado"
+        - "Cerrado Perdido"
+        - "Cerrado"
+      Metodo_Pago:
+        type: "string"
+        description: "metodos de pago disponibles"
+        enum:
+        - "Mercado Pago"
+        - "Paypal"
+        - "PatU"
+        - "Uala"
+      Cuenta_EA:
+        type: "string"
+        example: "ff98"
+      Fifa_Coins:
+        type: "float"
+        example: 12.34
+      Importe:
+        type: "float"
+        example: 12.34
+      Divisa:
+        type: "string"
+        example: "Pesos Argentinos"
+      Importe_Divisa_Local:
+        type: "float"
+        example: 12.34
+      Jugador_Solicitado:
+        type: "string"
+        example: "Pele"
